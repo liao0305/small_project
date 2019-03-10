@@ -20,5 +20,5 @@ class Tempinfo(models.Model):
         return self.name
 
     class Meta:
-        verbose_name = '票圈神器'
+        verbose_name = '自定义图片生成器'
         verbose_name_plural = verbose_name

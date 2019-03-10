@@ -1,15 +1,16 @@
 # coding:utf-8
 from django.shortcuts import render
+from dss.Serializer import serializer
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from .models import Tempinfo
-from dss.Serializer import serializer
 from django.views.generic import ListView
 from dss.Mixin import MultipleJsonResponseMixin
 from PIL import Image, ImageDraw, ImageFont
 from small1.settings import BASE_DIR
 import datetime
-import os, re
+import os
+import re
 from django.core.paginator import Paginator
 
 
@@ -36,6 +37,7 @@ def show_create_photo(request, url):
     return HttpResponse(img_data, content_type='image/jpg')
 
 
+# 模板列表视图
 def get_templist(request):
     result = Tempinfo.objects.values()
     paginator = Paginator(result, 4)
@@ -86,7 +88,7 @@ def generate_photo(request):
                 imgsize = temp.imgsize
                 imgsize_list = re.findall(r'\d+', imgsize)
                 try:
-                    bg = Image.new('RGB', (int(imgsize_list[1]), int(imgsize_list[0])))
+                    bg = Image.new('RGB', (int(imgsize_list[0]), int(imgsize_list[1])))
                 except Exception as e:
                     return JsonResponse({'success': False, 'data': '图片大小出错:' + str(e)})
                 im = Image.open(temp.img)
@@ -97,9 +99,7 @@ def generate_photo(request):
                     textplace_list = re.findall(r'\d+', textplace)
                     textcolor = temp.textcolor
                     textcolor_list = re.findall(r'\d+', textcolor)
-                    draw.text((int(textplace_list[0]), int(textplace_list[1])), content, fill=(int(textcolor_list[0]),
-                                                                                     int(textcolor_list[1]), int(
-                        textcolor_list[2])), font=ttfont)
+                    draw.text((int(textplace_list[0]), int(textplace_list[1])), content, fill=(int(textcolor_list[0]), int(textcolor_list[1]), int(textcolor_list[2])), font=ttfont)
                 except Exception as e:
                     return JsonResponse({'success': False, 'data': '文字颜色位置出错：' + str(e)})
                 if temp.text2 != None:
